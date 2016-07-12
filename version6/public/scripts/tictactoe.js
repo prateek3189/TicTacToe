@@ -1,4 +1,4 @@
-// Cell
+// Cell component
 var Cell = React.createClass({
     render: function () {
         var myFontSize = parseInt((10 / this.props.size)*2, 10) + 'em';
@@ -19,7 +19,7 @@ var Cell = React.createClass({
     }
 });
 
-// Row
+// Row component
 var Row = React.createClass({
     render: function () {
         var cells = [];
@@ -125,7 +125,7 @@ var App = React.createClass({
         this._bindEvents();
 
         // Kick off game on load
-        this.socket.emit('start:game');
+        this.socket.emit('game:start');
     },
 
     componentWillUnmount: function() {
@@ -144,7 +144,7 @@ var App = React.createClass({
     },
 
     _onTurnPlayed: function (turn, rowNum, colNum) {
-        this.socket.emit('play:turn', this.state.marker, rowNum, colNum);
+        this.socket.emit('game:play:turn', this.state.marker, rowNum, colNum);
     },
 
     _onRestartGame: function() {
@@ -155,7 +155,7 @@ var App = React.createClass({
         var self = this;
         var playerMarker, activePlayerMarker;
 
-        this.socket.on('started:game', function (options) {
+        this.socket.on('game:started', function (options) {
             if (document.getElementById('overlay')) {
                 document.getElementById('overlay').style.display = 'none';
             }
@@ -170,29 +170,29 @@ var App = React.createClass({
             playerMarker = options.marker;
         });
 
-        this.socket.on('start:game:limit:exceeded', function () {
+        this.socket.on('game:start:limit:exceeded', function () {
             alert('No slot available to paly! Please check after some time :D');
         });
 
-        this.socket.on('played:turn', function (updatedData) {
+        this.socket.on('game:played:turn', function (updatedData) {
             self.setState({ data: updatedData });
 
             // Check for the winner
             self.socket.emit('game:check:winner', updatedData);
         });
 
-        this.socket.on('played:turn:change', function (marker, oppmarker) {
+        this.socket.on('game:played:turn:change', function (marker, oppmarker) {
             var turnOverlay = document.getElementById('overlay_turn');
             document.getElementById('turn_marker_' + marker).style.display = 'none';
             document.getElementById('turn_marker_' + oppmarker).style.display = 'inline-block';
             turnOverlay.style.display = (playerMarker === marker) ? 'block' : 'none';
         });
 
-        this.socket.on('start:game:player:onhold', function () {
+        this.socket.on('game:start:player:onhold', function () {
             document.getElementById('overlay').style.display = 'block';
         });
 
-        this.socket.on('start:game:ready', function (options) {
+        this.socket.on('game:start:ready', function (options) {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('turn_marker_' + options.activeMarker).style.display = 'inline-block';
             activePlayerMarker = options.activeMarker;

@@ -13,7 +13,7 @@ console.log('Server listening on port 3000: http://localhost:3000');
 var io = require('socket.io')(server);
 
 // Game configs
-var SIZE = 10,
+var SIZE = 3,
     MARKERS = ['X', 'O'],
     currentConnections = 0,
     initialGameState, activeMarker;
@@ -41,15 +41,15 @@ _init();
 io.on('connection', function (socket) {
     ++currentConnections;
 
-    socket.on('start:game', function () {
+    socket.on('game:start', function () {
         if (currentConnections > 2) {
-            socket.emit('start:game:limit:exceeded');
+            socket.emit('game:start:limit:exceeded');
             return;
         }
 
         socket.marker = MARKERS[currentConnections - 1];
 
-        socket.emit('started:game', {
+        socket.emit('game:started', {
             size: SIZE,
             data: initialGameState,
             marker: MARKERS[currentConnections - 1],
@@ -57,20 +57,16 @@ io.on('connection', function (socket) {
         });
 
         if (currentConnections < 2) {
-            socket.emit('start:game:player:onhold');
+            socket.emit('game:start:player:onhold');
         } else {
-            io.emit('start:game:ready', { activeMarker: activeMarker });
+            io.emit('game:start:ready', { activeMarker: activeMarker });
         }
 
         // Maintaining log
         console.log("Player " + currentConnections + " Joined the game.");
     });
 
-    socket.on('game:restart', function() {
-        io.emit('game:restart:done');
-    });
-
-    socket.on('play:turn', function (marker, rowNum, colNum) {
+    socket.on('game:play:turn', function (marker, rowNum, colNum) {
         var dataClone, oppmarker;
 
         if (!initialGameState[rowNum][colNum]) {
@@ -88,12 +84,29 @@ io.on('connection', function (socket) {
                 onGameTieEvent();
             }
 
-            io.emit('played:turn', dataClone);
-            io.emit('played:turn:change', marker, oppmarker);
+            io.emit('game:played:turn', dataClone);
+            io.emit('game:played:turn:change', marker, oppmarker);
         }
     });
 
-    // Check for winning state of given marker
+    socket.on('game:restart', function() {
+        io.emit('game:restart:done');
+    });
+
+    socket.on('disconnect', function () {
+        --currentConnections;
+        if (currentConnections === 0) {
+            console.log("All Player left the game");
+            _init();
+        } else if (currentConnections < 2) {
+            console.log("Player " + looser + " left the game");
+            var looser = socket.marker;
+            var winner = getOpponentMarker(socket.marker);
+            io.emit('game:result', looser, winner);
+        }
+    });
+
+    // Utils
     function checkWinningState(data, marker) {
         var valueToCheck = MARKERS.indexOf(marker) + 1;
         var result = false;
@@ -125,7 +138,6 @@ io.on('connection', function (socket) {
         return !!result;
     }
 
-    // Check withdraw  game
     function checkWithdrawGame(data) {
         result = data.every(function (row) {
             return row.indexOf(0) === -1;
@@ -133,27 +145,11 @@ io.on('connection', function (socket) {
         return !!result;
     }
 
-    // on Tie Game
     function onGameTieEvent() {
         _init();
         io.emit('game:tie');
     }
 
-    // Disconnect
-    socket.on('disconnect', function () {
-        --currentConnections;
-        if (currentConnections === 0) {
-            console.log("All Player left the game");
-            _init();
-        } else if (currentConnections < 2) {
-            console.log("Player " + looser + " left the game");
-            var looser = socket.marker;
-            var winner = getOpponentMarker(socket.marker);
-            io.emit('game:result', looser, winner);
-        }
-    });
-
-    // Utils
     function getCol(matrix, col) {
         var column = [];
         for (var i = 0; i < matrix.length; i++) {
