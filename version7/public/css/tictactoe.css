@@ -1,0 +1,164 @@
+body {
+  background: url("../img/bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  padding: 20px;
+  color: #666;
+}
+
+.content {
+    width: 740px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.content:after,
+.content:before {
+    display: table;
+    clear: both;
+    content: '';
+}
+
+.overlay, .overlay_turn {
+    position: absolute;
+    top: 88px;
+    width: 475px;
+    height: 475px;
+    background: #000;
+    opacity: 0.55;
+    display: none;
+}
+
+.overlay b, .overlay_turn b {
+    text-align: center;
+    font-size: 35px;
+    position: absolute;
+    top:40%;
+    left: 0;
+    right: 0;
+    color: #FFF;
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    height: 50px;
+}
+
+table {
+    border: 1px solid #000;
+    border-collapse: collapse;
+    background: #FFF;
+    color: #666;
+    float: left;
+    width: 475px;
+    height: 475px;
+}
+
+td {
+    border: 1px solid #000;
+    vertical-align: middle;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.7em;
+}
+
+.information {
+    float: left;
+    border: 1px solid #666;
+    width: 200px;
+    padding: 5px;
+    font-size: 20px;
+    margin: 0 0 20px 20px;
+}
+
+.information label {
+    width: 100px;
+    display: inline-block;
+}
+
+.information span.marker {
+    width: 50px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.information span.turn_marker {
+    display: none;
+    color: #008000;
+}
+
+.player_info {
+    width: 30%;
+    float: left;
+    font-size: 20px;
+    margin: 0 0 20px 20px;
+}
+
+.show {
+    display: block;
+}
+
+button {
+    width: 180px;
+    background: #DA0000;
+    color: #FFF;
+    font-weight: bold;
+    font-size: 20px;
+    border: 0;
+    float: left;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+button#quitGame:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+/* Popup */
+.popup {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.popup .fade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    background: #000;
+    width: 100%;
+    height: 100%;
+    opacity: 0.55;
+    z-index: 1;
+}
+
+.popup .content {
+    position: absolute;
+    width: 500px;
+    background: #FFF;
+    z-index: 10;
+    top: 20%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    padding: 100px;
+    font-size: 60px;
+}
+
+.popup button.restartGame {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    margin: 0 auto;
+}

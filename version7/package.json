@@ -1,0 +1,20 @@
+{
+  "name": "ttt_react",
+  "version": "1.0.0",
+  "description": "Multiplayer tic-tac-toe game.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
+    "socket.io-client": "^1.4.8"
+  }
+}
